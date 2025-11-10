@@ -13,13 +13,11 @@ app.use(express.json());
 
 // ✅ Configure CORS explicitly for React frontend
 app.use(cors({
-  origin: [
-    'http://localhost:3000',                   // for local testing
-    'https://ak-linkedin-clone.vercel.app/'   // for production
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: ["http://localhost:3000", "https://ak-linkedin-clone.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
+
 
 
 // MongoDB Connection
