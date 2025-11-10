@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
     'http://localhost:3000',                   // for local testing
-    'https://your-frontend-name.netlify.app'   // for production
+    'https://ak-linkedin-clone.vercel.app/'   // for production
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
