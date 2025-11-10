@@ -12,13 +12,15 @@ const app = express();
 app.use(express.json());
 
 // ✅ Configure CORS explicitly for React frontend
-app.use(
-  cors({
-    origin: ['http://localhost:3000'], // React dev server
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+app.use(cors({
+  origin: [
+    'http://localhost:3000',                   // for local testing
+    'https://your-frontend-name.netlify.app'   // for production
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
