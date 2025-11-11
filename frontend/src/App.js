@@ -1,4 +1,4 @@
-// App.js - Main React Component
+// App.js - Enhanced with Dark Mode & Animations
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -10,6 +10,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   
   // Form states
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -17,9 +18,14 @@ function App() {
   const [postContent, setPostContent] = useState('');
   const [editingPost, setEditingPost] = useState(null);
   const [commentText, setCommentText] = useState({});
+  const [showComments, setShowComments] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode !== null) {
+      setDarkMode(savedDarkMode === 'true');
+    }
     if (token) {
       fetchUser(token);
     }
@@ -31,12 +37,15 @@ function App() {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
+
   const fetchUser = async (token) => {
     try {
       const response = await fetch(`${API_URL}/api/me`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (response.ok) {
@@ -154,9 +163,7 @@ function App() {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/posts/${postId}/like`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (response.ok) {
@@ -198,9 +205,7 @@ function App() {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/posts/${postId}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (response.ok) {
@@ -239,6 +244,10 @@ function App() {
     setPosts([]);
   };
 
+  const toggleComments = (postId) => {
+    setShowComments(prev => ({ ...prev, [postId]: !prev[postId] }));
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -250,72 +259,112 @@ function App() {
     return `${Math.floor(diff / 86400)}d ago`;
   };
 
+  // Animated Bubbles Background
+  const Bubbles = () => (
+    <div className="bubbles-container">
+      {[...Array(15)].map((_, i) => (
+        <div key={i} className="bubble" style={{
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 15}s`,
+          animationDuration: `${15 + Math.random() * 10}s`
+        }}></div>
+      ))}
+    </div>
+  );
+
   if (!isAuthenticated) {
     return (
       <div className="auth-container">
-        <div className="auth-card">
-          <h1 className="logo">LinkedIn Clone</h1>
+        <Bubbles />
+        <div className="auth-card fade-in">
+          <div className="logo-container">
+            <i className="fas fa-briefcase logo-icon"></i>
+            <h1 className="logo">LinkedIn Clone</h1>
+          </div>
           
           <div className="auth-tabs">
             <button 
-              className={showLogin ? 'active' : ''} 
+              className={`auth-tab ${showLogin ? 'active' : ''}`}
               onClick={() => setShowLogin(true)}
             >
-              Login
+              <i className="fas fa-sign-in-alt"></i> Login
             </button>
             <button 
-              className={!showLogin ? 'active' : ''} 
+              className={`auth-tab ${!showLogin ? 'active' : ''}`}
               onClick={() => setShowLogin(false)}
             >
-              Sign Up
+              <i className="fas fa-user-plus"></i> Sign Up
             </button>
           </div>
 
           {showLogin ? (
-            <form onSubmit={handleLogin} className="auth-form">
-              <input
-                type="email"
-                placeholder="Email"
-                value={loginData.email}
-                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={loginData.password}
-                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                required
-              />
-              <button type="submit" disabled={loading}>
-                {loading ? 'Logging in...' : 'Login'}
+            <form onSubmit={handleLogin} className="auth-form slide-in">
+              <div className="input-group">
+                <i className="fas fa-envelope input-icon"></i>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={loginData.email}
+                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <i className="fas fa-lock input-icon"></i>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={loginData.password}
+                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                  required
+                />
+              </div>
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? (
+                  <><i className="fas fa-spinner fa-spin"></i> Logging in...</>
+                ) : (
+                  <><i className="fas fa-sign-in-alt"></i> Login</>
+                )}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleSignup} className="auth-form">
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={signupData.name}
-                onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={signupData.email}
-                onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={signupData.password}
-                onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                required
-              />
-              <button type="submit" disabled={loading}>
-                {loading ? 'Creating Account...' : 'Sign Up'}
+            <form onSubmit={handleSignup} className="auth-form slide-in">
+              <div className="input-group">
+                <i className="fas fa-user input-icon"></i>
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={signupData.name}
+                  onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <i className="fas fa-envelope input-icon"></i>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={signupData.email}
+                  onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <i className="fas fa-lock input-icon"></i>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={signupData.password}
+                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                  required
+                />
+              </div>
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? (
+                  <><i className="fas fa-spinner fa-spin"></i> Creating Account...</>
+                ) : (
+                  <><i className="fas fa-user-plus"></i> Sign Up</>
+                )}
               </button>
             </form>
           )}
@@ -326,52 +375,86 @@ function App() {
 
   return (
     <div className="app">
-      <header className="header">
+      <Bubbles />
+      <header className="header slide-down">
         <div className="header-content">
-          <h1 className="logo">LinkedIn Clone</h1>
+          <div className="logo-section">
+            <i className="fas fa-briefcase logo-icon-small"></i>
+            <h1 className="logo">LinkedIn Clone</h1>
+          </div>
           <div className="user-section">
-            <span className="user-name">Welcome, {user?.name}</span>
-            <button onClick={handleLogout} className="logout-btn">Logout</button>
+            <button 
+              className="theme-toggle" 
+              onClick={() => setDarkMode(!darkMode)}
+              title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'}`}></i>
+            </button>
+            <div className="user-info">
+              <i className="fas fa-user-circle user-icon"></i>
+              <span className="user-name">{user?.name}</span>
+            </div>
+            <button onClick={handleLogout} className="logout-btn">
+              <i className="fas fa-sign-out-alt"></i> Logout
+            </button>
           </div>
         </div>
       </header>
 
       <main className="main-content">
-        <div className="create-post">
-          <h2>Create a Post</h2>
+        <div className="create-post fade-in">
+          <h2><i className="fas fa-edit"></i> Create a Post</h2>
           <form onSubmit={handleCreatePost}>
-            <textarea
-              placeholder="What's on your mind?"
-              value={postContent}
-              onChange={(e) => setPostContent(e.target.value)}
-              rows="3"
-              required
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? 'Posting...' : 'Post'}
+            <div className="post-input-wrapper">
+              <i className="fas fa-pen post-icon"></i>
+              <textarea
+                placeholder="What's on your mind?"
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+                rows="3"
+                required
+              />
+            </div>
+            <button type="submit" className="post-btn" disabled={loading}>
+              {loading ? (
+                <><i className="fas fa-spinner fa-spin"></i> Posting...</>
+              ) : (
+                <><i className="fas fa-paper-plane"></i> Post</>
+              )}
             </button>
           </form>
         </div>
 
         <div className="feed">
-          <h2>Feed</h2>
+          <h2><i className="fas fa-stream"></i> Feed</h2>
           {posts.length === 0 ? (
-            <p className="no-posts">No posts yet. Be the first to post!</p>
+            <div className="no-posts fade-in">
+              <i className="fas fa-inbox no-posts-icon"></i>
+              <p>No posts yet. Be the first to post!</p>
+            </div>
           ) : (
-            posts.map((post) => (
-              <div key={post._id} className="post">
+            posts.map((post, index) => (
+              <div key={post._id} className="post fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className="post-header">
                   <div className="post-user">
-                    <div className="avatar">{post.userName[0].toUpperCase()}</div>
+                    <div className="avatar">
+                      <i className="fas fa-user"></i>
+                    </div>
                     <div>
                       <h3>{post.userName}</h3>
-                      <p className="post-time">{formatDate(post.createdAt)}</p>
+                      <p className="post-time">
+                        <i className="far fa-clock"></i> {formatDate(post.createdAt)}
+                      </p>
                     </div>
                   </div>
                   {user?.id === post.userId && (
                     <div className="post-actions">
-                      <button onClick={() => setEditingPost(post)}>Edit</button>
-                      <button onClick={() => handleDeletePost(post._id)}>Delete</button>
+                      <button onClick={() => setEditingPost(post)} title="Edit">
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button onClick={() => handleDeletePost(post._id)} title="Delete">
+                        <i className="fas fa-trash"></i>
+                      </button>
                     </div>
                   )}
                 </div>
@@ -383,16 +466,19 @@ function App() {
                       id={`edit-${post._id}`}
                       rows="3"
                     />
-                    <div>
+                    <div className="edit-actions">
                       <button 
+                        className="save-btn"
                         onClick={() => {
                           const content = document.getElementById(`edit-${post._id}`).value;
                           handleUpdatePost(post._id, content);
                         }}
                       >
-                        Save
+                        <i className="fas fa-check"></i> Save
                       </button>
-                      <button onClick={() => setEditingPost(null)}>Cancel</button>
+                      <button className="cancel-btn" onClick={() => setEditingPost(null)}>
+                        <i className="fas fa-times"></i> Cancel
+                      </button>
                     </div>
                   </div>
                 ) : (
@@ -401,38 +487,63 @@ function App() {
 
                 <div className="post-footer">
                   <button 
-                    className={`like-btn ${post.likes?.includes(user?.id) ? 'liked' : ''}`}
+                    className={`action-btn like-btn ${post.likes?.includes(user?.id) ? 'liked' : ''}`}
                     onClick={() => handleLike(post._id)}
                   >
-                    👍 {post.likes?.length || 0} {post.likes?.length === 1 ? 'Like' : 'Likes'}
+                    <i className={`${post.likes?.includes(user?.id) ? 'fas' : 'far'} fa-thumbs-up`}></i>
+                    <span>{post.likes?.length || 0}</span>
                   </button>
-                  <span>💬 {post.comments?.length || 0} {post.comments?.length === 1 ? 'Comment' : 'Comments'}</span>
+                  <button 
+                    className="action-btn comment-btn"
+                    onClick={() => toggleComments(post._id)}
+                  >
+                    <i className="far fa-comment"></i>
+                    <span>{post.comments?.length || 0}</span>
+                  </button>
+                  <button className="action-btn share-btn">
+                    <i className="fas fa-share"></i>
+                    <span>Share</span>
+                  </button>
                 </div>
 
-                {post.comments && post.comments.length > 0 && (
-                  <div className="comments">
-                    {post.comments.map((comment, idx) => (
-                      <div key={idx} className="comment">
-                        <div className="comment-avatar">{comment.userName[0].toUpperCase()}</div>
-                        <div className="comment-content">
-                          <strong>{comment.userName}</strong>
-                          <p>{comment.text}</p>
-                        </div>
+                {showComments[post._id] && (
+                  <>
+                    {post.comments && post.comments.length > 0 && (
+                      <div className="comments slide-in">
+                        {post.comments.map((comment, idx) => (
+                          <div key={idx} className="comment">
+                            <div className="comment-avatar">
+                              <i className="fas fa-user"></i>
+                            </div>
+                            <div className="comment-content">
+                              <strong>{comment.userName}</strong>
+                              <p>{comment.text}</p>
+                              <span className="comment-time">
+                                <i className="far fa-clock"></i> {formatDate(comment.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    )}
 
-                <div className="comment-form">
-                  <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    value={commentText[post._id] || ''}
-                    onChange={(e) => setCommentText({ ...commentText, [post._id]: e.target.value })}
-                    onKeyPress={(e) => e.key === 'Enter' && handleComment(post._id)}
-                  />
-                  <button onClick={() => handleComment(post._id)}>Comment</button>
-                </div>
+                    <div className="comment-form">
+                      <div className="comment-avatar-small">
+                        <i className="fas fa-user"></i>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Write a comment..."
+                        value={commentText[post._id] || ''}
+                        onChange={(e) => setCommentText({ ...commentText, [post._id]: e.target.value })}
+                        onKeyPress={(e) => e.key === 'Enter' && handleComment(post._id)}
+                      />
+                      <button onClick={() => handleComment(post._id)}>
+                        <i className="fas fa-paper-plane"></i>
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))
           )}
