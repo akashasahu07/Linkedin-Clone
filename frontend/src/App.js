@@ -11,7 +11,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
-  
+
   // Form states
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({ name: '', email: '', password: '' });
@@ -47,7 +47,7 @@ function App() {
       const response = await fetch(`${API_URL}/api/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
@@ -74,16 +74,16 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginData)
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         localStorage.setItem('token', data.token);
         setUser(data.user);
@@ -102,16 +102,16 @@ function App() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const response = await fetch(`${API_URL}/api/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signupData)
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         localStorage.setItem('token', data.token);
         setUser(data.user);
@@ -130,9 +130,9 @@ function App() {
   const handleCreatePost = async (e) => {
     e.preventDefault();
     if (!postContent.trim()) return;
-    
+
     setLoading(true);
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/posts`, {
@@ -143,7 +143,7 @@ function App() {
         },
         body: JSON.stringify({ content: postContent })
       });
-      
+
       if (response.ok) {
         setPostContent('');
         fetchPosts();
@@ -165,7 +165,7 @@ function App() {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         fetchPosts();
       }
@@ -177,7 +177,7 @@ function App() {
   const handleComment = async (postId) => {
     const text = commentText[postId];
     if (!text?.trim()) return;
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/posts/${postId}/comment`, {
@@ -188,7 +188,7 @@ function App() {
         },
         body: JSON.stringify({ text })
       });
-      
+
       if (response.ok) {
         setCommentText({ ...commentText, [postId]: '' });
         fetchPosts();
@@ -200,14 +200,14 @@ function App() {
 
   const handleDeletePost = async (postId) => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/posts/${postId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         fetchPosts();
       }
@@ -227,7 +227,7 @@ function App() {
         },
         body: JSON.stringify({ content })
       });
-      
+
       if (response.ok) {
         setEditingPost(null);
         fetchPosts();
@@ -252,7 +252,7 @@ function App() {
     const date = new Date(dateString);
     const now = new Date();
     const diff = Math.floor((now - date) / 1000);
-    
+
     if (diff < 60) return 'Just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -281,15 +281,15 @@ function App() {
             <i className="fas fa-briefcase logo-icon"></i>
             <h1 className="logo">LinkedIn Clone</h1>
           </div>
-          
+
           <div className="auth-tabs">
-            <button 
+            <button
               className={`auth-tab ${showLogin ? 'active' : ''}`}
               onClick={() => setShowLogin(true)}
             >
               <i className="fas fa-sign-in-alt"></i> Login
             </button>
-            <button 
+            <button
               className={`auth-tab ${!showLogin ? 'active' : ''}`}
               onClick={() => setShowLogin(false)}
             >
@@ -383,8 +383,8 @@ function App() {
             <h1 className="logo">LinkedIn Clone</h1>
           </div>
           <div className="user-section">
-            <button 
-              className="theme-toggle" 
+            <button
+              className="theme-toggle"
               onClick={() => setDarkMode(!darkMode)}
               title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
@@ -467,7 +467,7 @@ function App() {
                       rows="3"
                     />
                     <div className="edit-actions">
-                      <button 
+                      <button
                         className="save-btn"
                         onClick={() => {
                           const content = document.getElementById(`edit-${post._id}`).value;
@@ -486,14 +486,14 @@ function App() {
                 )}
 
                 <div className="post-footer">
-                  <button 
+                  <button
                     className={`action-btn like-btn ${post.likes?.includes(user?.id) ? 'liked' : ''}`}
                     onClick={() => handleLike(post._id)}
                   >
                     <i className={`${post.likes?.includes(user?.id) ? 'fas' : 'far'} fa-thumbs-up`}></i>
                     <span>{post.likes?.length || 0}</span>
                   </button>
-                  <button 
+                  <button
                     className="action-btn comment-btn"
                     onClick={() => toggleComments(post._id)}
                   >
