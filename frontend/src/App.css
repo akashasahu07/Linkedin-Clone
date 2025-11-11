@@ -16,7 +16,7 @@
   --dark-text: #e4e6eb;
   --dark-text-secondary: #b0b3b8;
   --dark-border: #2d3348;
-
+  
   /* Light Mode Colors */
   --light-bg: #f0f2f5;
   --light-card: #ffffff;
@@ -24,7 +24,7 @@
   --light-text: #1c1e21;
   --light-text-secondary: #65676b;
   --light-border: #e4e6eb;
-
+  
   /* Accent Colors */
   --primary: #6366f1;
   --primary-hover: #4f46e5;
@@ -32,13 +32,13 @@
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
-
+  
   /* Gradients */
   --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-
+  
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
@@ -131,12 +131,10 @@ body.light-mode {
     transform: translateX(0) scale(1);
     opacity: 0.1;
   }
-
   50% {
     opacity: 0.15;
     transform: translateX(100px) scale(1.2);
   }
-
   100% {
     bottom: 110%;
     transform: translateX(-50px) scale(0.8);
@@ -150,7 +148,6 @@ body.light-mode {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -162,7 +159,6 @@ body.light-mode {
     opacity: 0;
     transform: translateX(-20px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
@@ -174,7 +170,6 @@ body.light-mode {
     opacity: 0;
     transform: translateY(-20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -182,24 +177,18 @@ body.light-mode {
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1);
   }
-
   50% {
     transform: scale(1.05);
   }
 }
 
 @keyframes glow {
-
-  0%,
-  100% {
+  0%, 100% {
     box-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
   }
-
   50% {
     box-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
   }
@@ -792,8 +781,7 @@ body.light-mode {
   gap: 10px;
 }
 
-.save-btn,
-.cancel-btn {
+.save-btn, .cancel-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 10px;
@@ -815,8 +803,7 @@ body.light-mode {
   color: white;
 }
 
-.save-btn:hover,
-.cancel-btn:hover {
+.save-btn:hover, .cancel-btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -889,8 +876,7 @@ body.light-mode {
   background: rgba(99, 102, 241, 0.1);
 }
 
-.comment-avatar,
-.comment-avatar-small {
+.comment-avatar, .comment-avatar-small {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -1057,13 +1043,32 @@ body.light-mode {
     font-size: 32px;
   }
 
-  .create-post,
-  .post {
+  .create-post, .post {
     padding: 16px;
   }
 
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .logout-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
   .user-info {
-    display: none;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .user-icon {
+    font-size: 18px;
+  }
+
+  .user-name {
+    font-size: 13px;
   }
 }
 
@@ -1098,7 +1103,6 @@ body.light-mode {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
